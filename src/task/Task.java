@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Task {
     private final String taskName;
-    private final String taskDescription ;
+    private final String taskDescription;
     private int taskID;
     private TaskStatus taskStatus;
 
@@ -20,10 +20,6 @@ public class Task {
 
     public String getTaskName() {
         return taskName;
-    }
-
-    public String getTaskDescription() {
-        return taskDescription;
     }
 
     public int getTaskID() {
