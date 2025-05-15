@@ -7,20 +7,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskManager {
-    private int IDForTasks;
+    private int idForTasks;
     private final HashMap<Integer, Task> tasks;
     private final HashMap<Integer, Epic> epics;
     private final HashMap<Integer, Subtask> subtasks;
 
     public TaskManager() {
-        IDForTasks = 1;
+        idForTasks = 1;
         tasks = new HashMap<>();
         epics = new HashMap<>();
         subtasks = new HashMap<>();
     }
 
     private int generateID() {
-        return IDForTasks++;
+        return idForTasks++;
     }
 
     private void updateEpicStatus(Epic epic) {
@@ -51,7 +51,7 @@ public class TaskManager {
         tasks.clear();
         subtasks.clear();
         epics.clear();
-        IDForTasks = 1;
+        idForTasks = 1;
     }
 
     //methods for TASK

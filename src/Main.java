@@ -10,6 +10,8 @@ public class Main {
         String line = "-".repeat(50);
         TaskManager taskManager = new TaskManager();
 
+        
+        //Тест добавления TASK, EPIC, SUBTASK
         System.out.println("Тест добавления TASK, EPIC, SUBTASK");
         Task task1 = new Task("Task1", "More information about task1", TaskStatus.NEW);
         Task task2 = new Task("Task2", "More information about task2", TaskStatus.NEW);
@@ -37,14 +39,10 @@ public class Main {
         taskManager.createSubTask(subtask5);
         taskManager.createSubTask(subtask6);
 
+        //Объеденил печать всех Task, Epic и SubTask в один метод, для удобства использованиия
+        printAllTest(taskManager, line);
 
-        System.out.println(taskManager.printAllTasks());
-        System.out.println(line);
-        System.out.println(taskManager.printAllEpics());
-        System.out.println(line);
-        System.out.println(taskManager.printAllSubtasks());
-        System.out.println(line);
-
+        //Тест на вывод любого типа задачи по вызову get() и так же тест на изменение задачи update()
         System.out.println("Вывод и изменение задачи");
         System.out.println(taskManager.getTask(2));
         System.out.println(taskManager.getEpic(5));
@@ -60,6 +58,7 @@ public class Main {
         System.out.println(taskManager.getSubTask(10));
         System.out.println(line);
 
+        //Тест на изменение статусов, согласно условию задачи у Epic статус выбирается  зависимости от статусов подзадач
         System.out.println("Проверка  статусов");
         System.out.printf("Task2 = %s", taskManager.getTask(2).getTaskStatus());
         System.out.printf("\nSubtask4 = %s", taskManager.getSubTask(10).getTaskStatus());
@@ -72,11 +71,12 @@ public class Main {
         taskManager.updateSubTask(7, new Subtask("Subtask1", "More information about subtask1", TaskStatus.IN_PROGRESS, epic1));
         taskManager.updateSubTask(11, new Subtask("Subtask5", "More information about subtask5", TaskStatus.DONE, epic3));
         taskManager.updateSubTask(12, new Subtask("Subtask6", "More information about subtask6", TaskStatus.DONE, epic3));
-
         System.out.println();
         System.out.printf("\nEpic1 = %s", taskManager.getEpic(4).getTaskStatus());
         System.out.printf("\nEpic2 = %s", taskManager.getEpic(5).getTaskStatus());
         System.out.printf("\nEpic3 = %s\n", taskManager.getEpic(6).getTaskStatus());
+
+        //Тест на удаление по ID
         System.out.println(line);
         System.out.println("Удаление задачи");
         System.out.println(taskManager.printAllTasks());
@@ -95,14 +95,20 @@ public class Main {
         System.out.println(line);
         System.out.println(taskManager.printAllSubtasks());
 
+        //Тест на удаление всех задач
         System.out.println("Удаление всех задач");
         taskManager.deleteAllTask();
+        printAllTest(taskManager, line);
+
+    }
+
+    // Метод вывода всех задач(используется несколько раз в тестах)
+    private static void printAllTest(TaskManager taskManager, String line) {
         System.out.println(taskManager.printAllTasks());
         System.out.println(line);
         System.out.println(taskManager.printAllEpics());
         System.out.println(line);
         System.out.println(taskManager.printAllSubtasks());
         System.out.println(line);
-
     }
 }
