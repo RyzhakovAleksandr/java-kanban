@@ -5,13 +5,17 @@ import java.util.Objects;
 public class Task {
     private final String taskName;
     private final String taskDescription;
-    private int taskID;
+    private int taskID = -1;
     private TaskStatus taskStatus;
 
-    public Task(java.lang.String nameTask, java.lang.String taskDescription, TaskStatus taskStatus) {
+    public Task(String nameTask, String taskDescription, TaskStatus taskStatus) {
         this.taskName = nameTask;
         this.taskDescription = taskDescription;
         this.taskStatus = taskStatus;
+    }
+
+    public String getTaskDescription() {
+        return taskDescription;
     }
 
     public void setTaskID(int taskID) {

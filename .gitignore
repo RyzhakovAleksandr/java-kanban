@@ -1,6 +1,13 @@
 # Compiled class file
 *.class
 
+# Folders
+lib/
+
+# Files
+*.xml
+*.iml
+
 # Log file
 *.log
 
