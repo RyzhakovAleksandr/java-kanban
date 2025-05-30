@@ -15,9 +15,4 @@ public class Subtask extends Task {
     public void setEpic(Epic epic) {
         this.epic = epic;
     }
-
-    @Override
-    public String toString() {
-        return (super.toString() + epic.getTaskName());
-    }
 }

@@ -11,19 +11,26 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private int idForTasks;
+    private final HistoryManager historyManager;
     private final HashMap<Integer, Task> tasksList;
 
     public InMemoryTaskManager() {
+        historyManager = Managers.getDefaultHistory();
         idForTasks = 1;
         tasksList = new HashMap<>();
     }
 
     @Override
     public boolean add(Task task) {
+        return add(generateID(), task);
+    }
+
+    @Override
+    public boolean add(int id, Task task) {
         if (task == null) {
             return false;
         }
-        task.setTaskID(generateID());
+        task.setTaskID(id);
         tasksList.put(task.getTaskID(), task);
         if (task instanceof Subtask) {
             ((Subtask) task).getEpic().getSubtasks().add((Subtask) task);
@@ -39,6 +46,7 @@ public class InMemoryTaskManager implements TaskManager {
         List<T> result = new ArrayList<>();
         for (Task task : tasksList.values()) {
             if (type.equals(task.getClass())) {
+                historyManager.addHistory(task);
                 result.add(type.cast(task));
             }
         }
@@ -48,6 +56,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getAll() {
         checkTypeEpic();
+        for (Task task : tasksList.values()) {
+            historyManager.addHistory(task);
+        }
         return new ArrayList<>(tasksList.values());
     }
 
@@ -59,6 +70,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasksList.get(id) instanceof Epic) {
             updateEpicStatus((Epic) tasksList.get(id));
         }
+        historyManager.addHistory(tasksList.get(id));
         return tasksList.get(id);
     }
 
@@ -69,6 +81,10 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         Task existingTask = tasksList.get(id);
+
+        if (existingTask == null) {
+            return add(id, newTask);
+        }
 
         if (existingTask instanceof Epic && !(newTask instanceof Epic)) {
             return false;
@@ -97,6 +113,13 @@ public class InMemoryTaskManager implements TaskManager {
             return true;
         }
     }
+
+    @Override
+    public void deleteAllTask() {
+        tasksList.clear();
+        idForTasks = 1;
+    }
+
 
     private int generateID() {
         return idForTasks++;
@@ -134,9 +157,8 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public void deleteAllTask() {
-        tasksList.clear();
-        idForTasks = 1;
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
     }
 
     private boolean deleteEpic(int id) {
@@ -184,7 +206,7 @@ public class InMemoryTaskManager implements TaskManager {
         return true;
     }
 
-    public int getSizeMap() {
+    public int getSize() {
         return tasksList.size();
     }
 
@@ -192,8 +214,8 @@ public class InMemoryTaskManager implements TaskManager {
         Epic convertedEpic = new Epic(
                 newEpic.getTaskName(),
                 newEpic.getTaskDescription());
-
-        tasksList.put(id, convertedEpic);
+        convertedEpic.setTaskID(id);
+        tasksList.put(convertedEpic.getTaskID(), convertedEpic);
         return true;
     }
 }

@@ -3,10 +3,11 @@
 
 # Folders
 lib/
+out/
 
 # Files
-*.xml
 *.iml
+*.xml
 
 # Log file
 *.log

@@ -8,6 +8,8 @@ public interface TaskManager {
 
     <T extends Task> boolean add(T task);
 
+    <T extends Task> boolean add(int id, T task);
+
     <T extends Task> List<T> getOneType(Class<T> task);
 
     List<Task> getAll();
@@ -18,4 +20,9 @@ public interface TaskManager {
 
     boolean remove(int id);
 
+    void deleteAllTask();
+
+    List<Task> getHistory();
+
+    int getSize();
 }

@@ -18,8 +18,4 @@ public class Epic extends Task {
         this.subtasks = subtasks;
     }
 
-    @Override
-    public String toString() {
-        return String.format(super.toString() + "subtasks=%s", subtasks.toString());
-    }
 }

@@ -8,14 +8,16 @@ import task.Subtask;
 import task.Task;
 import task.TaskStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryTaskManagerTest {
-    private InMemoryTaskManager taskManager;
+    private final Managers managers = new Managers();
+    private TaskManager taskManager;
 
     @BeforeEach
     public void setUp() {
-        taskManager = new InMemoryTaskManager();
+        taskManager = managers.getDefault();
         Task task1 = new Task("Task1", "More information about task1", TaskStatus.NEW);
         Task task2 = new Task("Task2", "More information about task2", TaskStatus.NEW);
         Task task3 = new Task("Task3", "More information about task3", TaskStatus.NEW);
@@ -44,10 +46,60 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void TestSizeAfterAddingSpecifiedAmount() { // Проверка на добавление
-        Assertions.assertEquals(12, taskManager.getSizeMap());
-        Assertions.assertTrue(taskManager.add(new Task("TaskTest", "More information about taskTest", TaskStatus.NEW)));
-        Assertions.assertEquals(13, taskManager.getSizeMap());
+    void TestTaskEqualsTask() { // проверьте, что экземпляры класса Task равны друг другу, если равен их id;
+        Task taskTest = new Task("Task1", "More information about task1", TaskStatus.NEW);
+        taskManager.add(taskTest);
+        Assertions.assertEquals(taskManager.get(taskManager.getSize()), taskTest);
+        Assertions.assertNotEquals(taskManager.get(1), taskTest);
+    }
+
+    @Test
+    void TestEpicEqualsEpic() {
+        Epic epicTest = new Epic("Task1", "More information about task1");
+        taskManager.add(epicTest);
+        Assertions.assertEquals(taskManager.get(taskManager.getSize()), epicTest);
+        Assertions.assertNotEquals(taskManager.get(1), epicTest);
+    }
+
+    @Test
+    void TestSubTaskEqualsSubTask() {
+        Subtask subTaskTest = new Subtask("Task1", "More information about task1", TaskStatus.NEW, new Epic("Epic1", "More information about epic1"));
+        taskManager.add(subTaskTest);
+        Assertions.assertEquals(taskManager.get(taskManager.getSize()), subTaskTest);
+        Assertions.assertNotEquals(taskManager.get(1), subTaskTest);
+    }
+
+    @Test
+    void TestErrorConvertEpicInSubTask() { // проверьте, что объект Epic нельзя добавить в самого себя в виде подзадачи
+        Epic epic = new Epic("Task1", "More information about task1");
+        taskManager.add(epic);
+        Epic oldEpic = (Epic) taskManager.get(taskManager.getSize());
+        ArrayList<Subtask> subtasks = oldEpic.getSubtasks();
+        //subtasks.add(oldEpic); ошибка компиляции, под копотом реализациия которая не позволяет так сделать
+    }
+
+    @Test
+    void TestErrorConvertSubTaskInEpic() { // проверьте, что объект Subtask нельзя сделать своим же эпиком;
+        Subtask subtask = new Subtask("1", "1", TaskStatus.NEW, new Epic("Epic1", "More information about epic1"));
+        taskManager.add(subtask);
+        Subtask oldSubtask = (Subtask) taskManager.get(taskManager.getSize());
+        //oldSubtask.setEpic(oldSubtask); ошибка компиляции, под копотом реализациия которая не позволяет так сделать
+    }
+
+    @Test
+    void TestVerifyManagersAreInitializedAndReady() { //убедитесь, что утилитарный класс всегда возвращает проинициализированные и готовые к работе экземпляры менеджеров;
+        Managers managersTest = new Managers();
+        Assertions.assertNotNull(managersTest);
+        Assertions.assertNotNull(managersTest.getDefault());
+        Assertions.assertNotNull(Managers.getDefaultHistory());
+    }
+
+    @Test
+    void TestConflictId() { // Проверка на конфликт id
+        Assertions.assertTrue(taskManager.remove(1));
+        Assertions.assertTrue(taskManager.update(1, new Task("Task100", "about Task 100",  TaskStatus.NEW)));
+        Assertions.assertTrue(taskManager.update(1, new Epic("Epic5", "More information about epic5")));
+        Assertions.assertFalse(taskManager.update(1, new Subtask("Subtask1234", "Subtask", TaskStatus.NEW, new Epic("Epic5", "More information about epic5"))));
     }
 
     @Test
@@ -163,5 +215,83 @@ public class InMemoryTaskManagerTest {
         Assertions.assertTrue(taskManager.update(7, new Subtask("SubSub", "More information about sub", TaskStatus.DONE, (Epic) taskManager.get(4))));
         Assertions.assertTrue(taskManager.update(9, new Subtask("SubSub", "More information about sub", TaskStatus.DONE, (Epic) taskManager.get(4))));
         Assertions.assertEquals(TaskStatus.DONE, taskManager.get(4).getTaskStatus()); //Статус Epic стал DONE потому что все подзадачи выполнены
+    }
+
+    @Test
+    void TestDeleteTaskById() { //Проверка удаления задачи по id
+        Assertions.assertTrue(taskManager.remove(3));
+        Assertions.assertNull(taskManager.get(3));
+        Assertions.assertTrue(taskManager.remove(6)); // При удаления Epic, его SubTask так же должны удаляться
+        Assertions.assertNull(taskManager.get(6));
+        Assertions.assertEquals(8, taskManager.getSize());
+    }
+
+    @Test
+    void TestDeleteTaskByIdIncorrectly() { //Проверка удаления задачи по id которого нет
+        Assertions.assertFalse(taskManager.remove(0));
+        Assertions.assertFalse(taskManager.remove(13));
+        Assertions.assertEquals(12, taskManager.getSize());
+    }
+
+    @Test
+    void TestCheckHistoryBy3() {
+        taskManager.get(1);
+        taskManager.get(5);
+        taskManager.get(10);
+        Assertions.assertEquals(3, taskManager.getHistory().size());
+    }
+
+    @Test
+    void TestCheckHistoryBy0() {
+        Assertions.assertEquals(0, taskManager.getHistory().size());
+    }
+
+    @Test
+    void TestCheckHistoryBy12() {
+        for (int i = 1; i < taskManager.getSize() + 1; i++) {
+            taskManager.get(i);
+        }
+        Assertions.assertEquals(10, taskManager.getHistory().size());
+        Assertions.assertEquals(3, taskManager.getHistory().getFirst().getTaskID());
+
+        taskManager.get(5);
+        taskManager.get(10);
+
+        Assertions.assertEquals(10, taskManager.getHistory().size());
+        Assertions.assertEquals(10, taskManager.getHistory().getLast().getTaskID());
+        Assertions.assertEquals(5, taskManager.getHistory().getFirst().getTaskID());
+        Assertions.assertEquals(5, taskManager.getHistory().get(8).getTaskID());
+
+    }
+
+    @Test
+    void TestPrintAll() { // Сценарий для проверки с сайта
+        printAllTasks(taskManager);
+    }
+
+    // Сценарий для проверки с сайта
+    private void printAllTasks(TaskManager taskManager) {
+        System.out.println("Задачи:");
+        for (Task task : taskManager.getOneType(Task.class)) {
+            System.out.println(task);
+        }
+
+        System.out.println("Эпики:");
+        for (Epic epic : taskManager.getOneType(Epic.class)) {
+            System.out.println(epic);
+
+            for (Subtask subtask : epic.getSubtasks()) {
+                System.out.println("--> " + subtask);
+            }
+        }
+        System.out.println("Подзадачи:");
+        for (Subtask subtask : taskManager.getOneType(Subtask.class)) {
+            System.out.println(subtask);
+        }
+
+        System.out.println("История:");
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task);
+        }
     }
 }
