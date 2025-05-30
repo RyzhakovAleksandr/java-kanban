@@ -87,7 +87,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void TestVerifyManagersAreInitializedAndReady() { //убедитесь, что утилитарный класс всегда возвращает проинициализированные и готовые к работе экземпляры менеджеров;
+    void TestInitializedAndReady() { //убедитесь, что утилитарный класс всегда возвращает проинициализированные и готовые к работе экземпляры менеджеров;
         Managers managersTest = new Managers();
         Assertions.assertNotNull(managersTest);
         Assertions.assertNotNull(managersTest.getDefault());
@@ -129,7 +129,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void TestEmptyCollectionAfterDeletedAllTasks() { //Проверка удаления всех задач
+    void TestEmptyCollection() { //Проверка удаления всех задач
         taskManager.deleteAllTask();
         List<Epic> epics = taskManager.getOneType(Epic.class);
         Assertions.assertTrue(epics.isEmpty());
@@ -153,7 +153,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void TestGetTaskUnknowByIdIncorrectly() { //Проверка задача по id которого нет
+    void TestGetTaskUnknow() { //Проверка задача по id которого нет
         Assertions.assertEquals(TaskStatus.UNKNOWN, taskManager.get(0).getTaskStatus());
         Assertions.assertEquals(TaskStatus.UNKNOWN, taskManager.get(13).getTaskStatus());
     }
