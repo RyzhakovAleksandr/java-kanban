@@ -97,7 +97,7 @@ public class InMemoryTaskManagerTest {
     @Test
     void TestConflictId() { // Проверка на конфликт id
         Assertions.assertTrue(taskManager.remove(1));
-        Assertions.assertTrue(taskManager.update(1, new Task("Task100", "about Task 100",  TaskStatus.NEW)));
+        Assertions.assertTrue(taskManager.update(1, new Task("Task100", "about Task 100", TaskStatus.NEW)));
         Assertions.assertTrue(taskManager.update(1, new Epic("Epic5", "More information about epic5")));
         Assertions.assertFalse(taskManager.update(1, new Subtask("Subtask1234", "Subtask", TaskStatus.NEW, new Epic("Epic5", "More information about epic5"))));
     }
@@ -167,7 +167,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void TestErrorUpdateTaskChangesEpic() { // Проверка апгрейда Epic на Task
+    void TestErrorUpdateTaskChanges() { // Проверка апгрейда Epic на Task
         Assertions.assertEquals("Epic1", taskManager.get(4).getTaskName());
         Assertions.assertFalse(taskManager.update(4, new Task("TaskNew1", "More information about task1", TaskStatus.DONE)));
         Assertions.assertEquals("Epic1", taskManager.get(4).getTaskName());
