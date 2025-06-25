@@ -221,8 +221,10 @@ public class InMemoryTaskManagerTest {
     void TestDeleteTaskById() { //Проверка удаления задачи по id
         Assertions.assertTrue(taskManager.remove(3));
         Assertions.assertNull(taskManager.get(3));
+        Assertions.assertFalse(taskManager.getHistory().contains(taskManager.get(3)));
         Assertions.assertTrue(taskManager.remove(6)); // При удаления Epic, его SubTask так же должны удаляться
         Assertions.assertNull(taskManager.get(6));
+        Assertions.assertFalse(taskManager.getHistory().contains(taskManager.get(6)));
         Assertions.assertEquals(8, taskManager.getSize());
     }
 
@@ -238,7 +240,12 @@ public class InMemoryTaskManagerTest {
         taskManager.get(1);
         taskManager.get(5);
         taskManager.get(10);
+        taskManager.get(1);
+        taskManager.get(5);
+        taskManager.get(10);
         Assertions.assertEquals(3, taskManager.getHistory().size());
+        Assertions.assertEquals(1, taskManager.getHistory().getFirst().getTaskID());
+        Assertions.assertEquals(10, taskManager.getHistory().getLast().getTaskID());
     }
 
     @Test
@@ -251,16 +258,14 @@ public class InMemoryTaskManagerTest {
         for (int i = 1; i < taskManager.getSize() + 1; i++) {
             taskManager.get(i);
         }
-        Assertions.assertEquals(10, taskManager.getHistory().size());
-        Assertions.assertEquals(3, taskManager.getHistory().getFirst().getTaskID());
+        Assertions.assertEquals(taskManager.getSize(), taskManager.getHistory().size());
 
         taskManager.get(5);
         taskManager.get(10);
 
-        Assertions.assertEquals(10, taskManager.getHistory().size());
         Assertions.assertEquals(10, taskManager.getHistory().getLast().getTaskID());
-        Assertions.assertEquals(5, taskManager.getHistory().getFirst().getTaskID());
-        Assertions.assertEquals(5, taskManager.getHistory().get(8).getTaskID());
+        Assertions.assertEquals(1, taskManager.getHistory().getFirst().getTaskID());
+        Assertions.assertEquals(11, taskManager.getHistory().get(8).getTaskID());
 
     }
 
