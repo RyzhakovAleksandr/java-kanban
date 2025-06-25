@@ -15,7 +15,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if(task != null) {
+        if (task != null) {
             remove(task.getTaskID());
             history.put(task.getTaskID(), linkLast(task));
         }
@@ -33,15 +33,15 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node nodePrevious = node.previous;
         Node nodeNext = node.next;
 
-        if(nodeNext != null) {
+        if (nodeNext != null) {
             nodeNext.previous = nodePrevious;
         } else {
             lastNode = nodePrevious;
         }
 
-        if(nodePrevious != null) {
+        if (nodePrevious != null) {
             nodePrevious.next = nodeNext;
-        }else {
+        } else {
             firstNode = nodeNext;
         }
         return true;
