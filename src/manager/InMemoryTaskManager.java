@@ -46,7 +46,7 @@ public class InMemoryTaskManager implements TaskManager {
         List<T> result = new ArrayList<>();
         for (Task task : tasksList.values()) {
             if (type.equals(task.getClass())) {
-                historyManager.addHistory(task);
+                historyManager.add(task);
                 result.add(type.cast(task));
             }
         }
@@ -57,7 +57,7 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Task> getAll() {
         checkTypeEpic();
         for (Task task : tasksList.values()) {
-            historyManager.addHistory(task);
+            historyManager.add(task);
         }
         return new ArrayList<>(tasksList.values());
     }
@@ -70,7 +70,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasksList.get(id) instanceof Epic) {
             updateEpicStatus((Epic) tasksList.get(id));
         }
-        historyManager.addHistory(tasksList.get(id));
+        historyManager.add(tasksList.get(id));
         return tasksList.get(id);
     }
 
@@ -110,6 +110,7 @@ public class InMemoryTaskManager implements TaskManager {
             return deleteEpic(id);
         } else {
             tasksList.remove(id);
+            historyManager.remove(id);
             return true;
         }
     }
@@ -117,6 +118,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllTask() {
         tasksList.clear();
+
         idForTasks = 1;
     }
 
@@ -158,7 +160,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public List<Task> getHistory() {
-        return historyManager.getHistory();
+        return historyManager.getTasks();
     }
 
     private boolean deleteEpic(int id) {
@@ -168,10 +170,12 @@ public class InMemoryTaskManager implements TaskManager {
             keysForDelete.add(subtask.getTaskID());
         }
         for (Integer key : keysForDelete) {
+            historyManager.remove(key);
             tasksList.remove(key);
         }
 
         tasksList.remove(id);
+        historyManager.remove(id);
         return true;
     }
 
