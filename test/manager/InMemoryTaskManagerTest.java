@@ -132,6 +132,7 @@ public class InMemoryTaskManagerTest {
     void TestEmptyCollection() { //Проверка удаления всех задач
         taskManager.deleteAllTask();
         List<Epic> epics = taskManager.getOneType(Epic.class);
+        System.out.println(epics);
         Assertions.assertTrue(epics.isEmpty());
     }
 

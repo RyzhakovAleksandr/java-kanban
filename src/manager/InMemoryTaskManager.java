@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
-    private int idForTasks;
-    private final HistoryManager historyManager;
-    private final HashMap<Integer, Task> tasksList;
+    protected int idForTasks;
+    protected final HistoryManager historyManager;
+    protected final HashMap<Integer, Task> tasksList;
 
     public InMemoryTaskManager() {
         historyManager = Managers.getDefaultHistory();
