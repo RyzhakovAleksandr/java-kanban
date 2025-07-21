@@ -31,20 +31,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
-        String[] lines;
+        String[] loadedLines;
 
         try {
-            lines = Files.readString(file.toPath()).split(System.lineSeparator());
+            loadedLines = Files.readString(file.toPath()).split(System.lineSeparator());
         } catch (IOException e) {
             throw new LoadException("No correct opened file");
         }
 
-        String history = lines[lines.length - 1];
+        String historyData = loadedLines[loadedLines.length - 1];
 
-        for (int i = 1; i < lines.length - 2; i++) {
-            String str = lines[i];
+        for (int pendingTask = 1; pendingTask < loadedLines.length - 2; pendingTask++) {
 
-            Task task = CSVFormatter.fromCSVToString(str, taskManager);
+            Task task = CSVFormatter.fromCSVToString(loadedLines[pendingTask], taskManager);
 
             if (task.getTaskID() >= taskManager.idForTasks) {
                 taskManager.idForTasks = task.getTaskID();
@@ -52,7 +51,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             taskManager.add(task);
         }
 
-        for (Integer id : CSVFormatter.idStringToListHistory(history)) {
+        for (Integer id : CSVFormatter.idStringToListHistory(historyData)) {
             taskManager.get(id);
         }
 
