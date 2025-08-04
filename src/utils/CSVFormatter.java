@@ -3,7 +3,10 @@ package utils;
 import manager.FileBackedTaskManager;
 import task.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CSVFormatter {
@@ -12,7 +15,7 @@ public class CSVFormatter {
     }
 
     public static String toCSVString(Task task) {
-        String format = "%s,%s,%s,%s,%s,%s";
+        String format = "%s,%s,%s,%s,%s,%s,%s,%s";
 
         return switch (task) {
             case Subtask subtask -> format.formatted(
@@ -21,7 +24,9 @@ public class CSVFormatter {
                     subtask.getTaskName(),
                     subtask.getTaskStatus(),
                     subtask.getTaskDescription(),
-                    subtask.getEpic().getTaskID()
+                    subtask.getEpic().getTaskID(),
+                    subtask.getTaskDuration(),
+                    subtask.getTaskStartTime()
             );
             case Epic epic -> format.formatted(
                     epic.getTaskID(),
@@ -29,7 +34,9 @@ public class CSVFormatter {
                     epic.getTaskName(),
                     epic.getTaskStatus(),
                     epic.getTaskDescription(),
-                    " "
+                    " ",
+                    epic.getTaskDuration(),
+                    epic.getTaskStartTime()
             );
             case Task t -> format.formatted(
                     t.getTaskID(),
@@ -37,7 +44,9 @@ public class CSVFormatter {
                     t.getTaskName(),
                     t.getTaskStatus(),
                     t.getTaskDescription(),
-                    " "
+                    " ",
+                    t.getTaskDuration(),
+                    t.getTaskStartTime()
             );
         };
     }
@@ -57,7 +66,7 @@ public class CSVFormatter {
 
     public static Task fromCSVToString(String str, FileBackedTaskManager manager) {
         String[] fields = str.split(",");
-        if (fields.length != 6) {
+        if (fields.length != 8) {
             throw new RuntimeException("Invalid CSV String");
         }
         int id = Integer.parseInt(fields[0]);
@@ -65,10 +74,12 @@ public class CSVFormatter {
         String name = fields[2];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
+        Duration duration = Duration.parse(fields[6]);
+        LocalDateTime startTime = LocalDateTime.parse(fields[7]);
         return switch (type) {
-            case TASK -> new Task(id, name, description, status);
-            case EPIC -> new Epic(id, name, description, status);
-            case SUBTASK -> new Subtask(id, name, description, status, (Epic) manager.get(Integer.parseInt(fields[5])));
+            case TASK -> new Task(id, name, description, status, duration, startTime);
+            case EPIC -> new Epic(id, name, description, status, duration, startTime);
+            case SUBTASK -> new Subtask(id, name, description, status, (Epic) manager.get(Integer.parseInt(fields[5])), duration, startTime);
         };
     }
 

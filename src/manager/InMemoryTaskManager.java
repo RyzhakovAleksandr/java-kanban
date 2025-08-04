@@ -5,6 +5,8 @@ import task.Epic;
 import task.Subtask;
 import task.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +67,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task get(int id) {
         if (id <= 0 || id >= tasksList.size() + 1) {
-            return new Task("-1", "-1", TaskStatus.UNKNOWN);
+            return new Task("-1", "-1", TaskStatus.UNKNOWN, Duration.ZERO, LocalDateTime.MAX);
         }
         if (tasksList.get(id) instanceof Epic) {
             updateEpicStatus((Epic) tasksList.get(id));
@@ -127,7 +129,7 @@ public class InMemoryTaskManager implements TaskManager {
         return idForTasks++;
     }
 
-    private void checkTypeEpic() {
+    public void checkTypeEpic() {
         for (Task task : tasksList.values()) {
             if (task instanceof Epic) {
                 updateEpicStatus((Epic) task);
@@ -139,7 +141,10 @@ public class InMemoryTaskManager implements TaskManager {
         ArrayList<Subtask> subtasksInEpic = epic.getSubtasks();
         if (subtasksInEpic == null || subtasksInEpic.isEmpty()) {
             epic.setTaskStatus(TaskStatus.NEW);
+            epic.setTaskDuration(Duration.ZERO);
+            epic.setTaskStartTime(LocalDateTime.MAX);
         } else {
+            epic.calculateTime();
             boolean allNew = true;
             boolean allDone = true;
             for (Subtask subtask : subtasksInEpic) {

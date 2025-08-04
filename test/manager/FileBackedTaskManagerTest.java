@@ -8,6 +8,8 @@ import task.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,13 +23,13 @@ public class FileBackedTaskManagerTest {
         file = File.createTempFile("data", "csv");
         taskManager = new FileBackedTaskManager(file);
 
-        Task newTask = new Task("Title", "TaskDescription", TaskStatus.NEW);
+        Task newTask = new Task("Title", "TaskDescription", TaskStatus.NEW, Duration.ofMinutes(20), LocalDateTime.now());
         taskManager.add(newTask);
 
         Epic newEpic = new Epic("titleEpic", "epic description");
         taskManager.add(newEpic);
 
-        Subtask newSubTask = new Subtask("title sub", "subtask description", TaskStatus.NEW, newEpic);
+        Subtask newSubTask = new Subtask("title sub", "subtask description", TaskStatus.NEW, newEpic, Duration.ofHours(1),  LocalDateTime.now());
         taskManager.add(newSubTask);
 
         taskManager.get(3);

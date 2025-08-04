@@ -1,4 +1,16 @@
 id,type,name,status,description,epic
-2,EPIC,Epic2,NEW,More information about epic2, 
+1,TASK,Task1,NEW,More information about task1, ,PT47M,2025-08-04T10:32
+2,TASK,Task2,NEW,More information about task2, ,PT27M,2025-08-04T10:38
+3,TASK,Task3,NEW,More information about task3, ,PT27M,2025-08-04T10:39
+4,EPIC,Epic1,NEW,More information about epic1, ,PT5H57M,2025-08-04T10:47
+5,EPIC,Epic2,DONE,More information about epic2, ,PT2H,2025-08-04T11:17
+6,EPIC,Epic3,NEW,More information about epic3, ,PT34M,2025-08-04T11:21
+7,SUBTASK,Subtask1,NEW,More information about subtask1,4,PT57M,2025-08-04T10:47
+8,SUBTASK,Subtask2,NEW,More information about subtask2,4,PT4H,2025-08-04T11:02
+9,SUBTASK,Subtask3,NEW,More information about subtask3,4,PT1H,2025-08-04T11:07
+10,SUBTASK,Subtask4,DONE,More information about subtask4,5,PT2H,2025-08-04T11:17
+11,SUBTASK,Subtask5,NEW,More information about subtask5,6,PT3M,2025-08-04T11:21
+12,SUBTASK,Subtask6,NEW,More information about subtask6,6,PT31M,2025-08-04T11:35
+13,SUBTASK,1,NEW,1,-1,PT31M,2025-08-04T11:35
 
-2,
+13,

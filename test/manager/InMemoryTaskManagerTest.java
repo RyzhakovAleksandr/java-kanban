@@ -8,6 +8,8 @@ import task.Subtask;
 import task.Task;
 import task.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,18 +20,18 @@ public class InMemoryTaskManagerTest {
     @BeforeEach
     public void setUp() {
         taskManager = managers.getDefault();
-        Task task1 = new Task("Task1", "More information about task1", TaskStatus.NEW);
-        Task task2 = new Task("Task2", "More information about task2", TaskStatus.NEW);
-        Task task3 = new Task("Task3", "More information about task3", TaskStatus.NEW);
+        Task task1 = new Task("Task1", "More information about task1", TaskStatus.NEW, Duration.ofMinutes(47), LocalDateTime.of(2025, 8, 4, 10, 32));
+        Task task2 = new Task("Task2", "More information about task2", TaskStatus.NEW, Duration.ofMinutes(27), LocalDateTime.of(2025, 8, 4, 10, 38));
+        Task task3 = new Task("Task3", "More information about task3", TaskStatus.NEW, Duration.ofMinutes(27), LocalDateTime.of(2025, 8, 4, 10, 39));
         Epic epic1 = new Epic("Epic1", "More information about epic1");
         Epic epic2 = new Epic("Epic2", "More information about epic2");
         Epic epic3 = new Epic("Epic3", "More information about epic3");
-        Subtask subtask1 = new Subtask("Subtask1", "More information about subtask1", TaskStatus.NEW, epic1);
-        Subtask subtask2 = new Subtask("Subtask2", "More information about subtask2", TaskStatus.NEW, epic1);
-        Subtask subtask3 = new Subtask("Subtask3", "More information about subtask3", TaskStatus.NEW, epic1);
-        Subtask subtask4 = new Subtask("Subtask4", "More information about subtask4", TaskStatus.DONE, epic2);
-        Subtask subtask5 = new Subtask("Subtask5", "More information about subtask5", TaskStatus.NEW, epic3);
-        Subtask subtask6 = new Subtask("Subtask6", "More information about subtask6", TaskStatus.NEW, epic3);
+        Subtask subtask1 = new Subtask("Subtask1", "More information about subtask1", TaskStatus.NEW, epic1, Duration.ofMinutes(57), LocalDateTime.of(2025, 8, 4, 10, 47));
+        Subtask subtask2 = new Subtask("Subtask2", "More information about subtask2", TaskStatus.NEW, epic1, Duration.ofHours(4), LocalDateTime.of(2025, 8, 4, 11, 2));
+        Subtask subtask3 = new Subtask("Subtask3", "More information about subtask3", TaskStatus.NEW, epic1,  Duration.ofHours(1), LocalDateTime.of(2025, 8, 4, 11, 7));
+        Subtask subtask4 = new Subtask("Subtask4", "More information about subtask4", TaskStatus.DONE, epic2,  Duration.ofHours(2), LocalDateTime.of(2025, 8, 4, 11, 17));
+        Subtask subtask5 = new Subtask("Subtask5", "More information about subtask5", TaskStatus.NEW, epic3, Duration.ofMinutes(3), LocalDateTime.of(2025, 8, 4, 11, 21));
+        Subtask subtask6 = new Subtask("Subtask6", "More information about subtask6", TaskStatus.NEW, epic3, Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35));
 
         taskManager.add(task1);
         taskManager.add(task2);
@@ -47,7 +49,7 @@ public class InMemoryTaskManagerTest {
 
     @Test
     void TestTaskEqualsTask() { // проверьте, что экземпляры класса Task равны друг другу, если равен их id;
-        Task taskTest = new Task("Task1", "More information about task1", TaskStatus.NEW);
+        Task taskTest = new Task("Task1", "More information about task1", TaskStatus.NEW, Duration.ofMinutes(47), LocalDateTime.of(2025, 8, 4, 10, 32));
         taskManager.add(taskTest);
         Assertions.assertEquals(taskManager.get(taskManager.getSize()), taskTest);
         Assertions.assertNotEquals(taskManager.get(1), taskTest);
@@ -63,7 +65,7 @@ public class InMemoryTaskManagerTest {
 
     @Test
     void TestSubTaskEqualsSubTask() {
-        Subtask subTaskTest = new Subtask("Task1", "More information about task1", TaskStatus.NEW, new Epic("Epic1", "More information about epic1"));
+        Subtask subTaskTest = new Subtask("Task1", "More information about task1", TaskStatus.NEW, new Epic("Epic1", "More information about epic1"), Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35));
         taskManager.add(subTaskTest);
         Assertions.assertEquals(taskManager.get(taskManager.getSize()), subTaskTest);
         Assertions.assertNotEquals(taskManager.get(1), subTaskTest);
@@ -80,7 +82,7 @@ public class InMemoryTaskManagerTest {
 
     @Test
     void TestErrorConvertSubTaskInEpic() { // проверьте, что объект Subtask нельзя сделать своим же эпиком;
-        Subtask subtask = new Subtask("1", "1", TaskStatus.NEW, new Epic("Epic1", "More information about epic1"));
+        Subtask subtask = new Subtask("1", "1", TaskStatus.NEW, new Epic("Epic1", "More information about epic1"), Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35));
         taskManager.add(subtask);
         Subtask oldSubtask = (Subtask) taskManager.get(taskManager.getSize());
         //oldSubtask.setEpic(oldSubtask); ошибка компиляции, под копотом реализациия которая не позволяет так сделать
@@ -97,9 +99,9 @@ public class InMemoryTaskManagerTest {
     @Test
     void TestConflictId() { // Проверка на конфликт id
         Assertions.assertTrue(taskManager.remove(1));
-        Assertions.assertTrue(taskManager.update(1, new Task("Task100", "about Task 100", TaskStatus.NEW)));
+        Assertions.assertTrue(taskManager.update(1, new Task("Task100", "about Task 100", TaskStatus.NEW, Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35))));
         Assertions.assertTrue(taskManager.update(1, new Epic("Epic5", "More information about epic5")));
-        Assertions.assertFalse(taskManager.update(1, new Subtask("Subtask1234", "Subtask", TaskStatus.NEW, new Epic("Epic5", "More information about epic5"))));
+        Assertions.assertFalse(taskManager.update(1, new Subtask("Subtask1234", "Subtask", TaskStatus.NEW, new Epic("Epic5", "More information about epic5"), Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35))));
     }
 
     @Test
@@ -162,7 +164,7 @@ public class InMemoryTaskManagerTest {
     @Test
     void TestUpdateTask() { // Проверка апгрейда Task
         Assertions.assertEquals("Task1", taskManager.get(1).getTaskName());
-        Assertions.assertTrue(taskManager.update(1, new Task("TaskNew1", "More information about task1", TaskStatus.DONE)));
+        Assertions.assertTrue(taskManager.update(1, new Task("TaskNew1", "More information about task1", TaskStatus.DONE, Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35))));
         Assertions.assertEquals(TaskStatus.DONE, taskManager.get(1).getTaskStatus());
         Assertions.assertEquals("TaskNew1", taskManager.get(1).getTaskName());
     }
@@ -170,14 +172,14 @@ public class InMemoryTaskManagerTest {
     @Test
     void TestErrorUpdateTaskChanges() { // Проверка апгрейда Epic на Task
         Assertions.assertEquals("Epic1", taskManager.get(4).getTaskName());
-        Assertions.assertFalse(taskManager.update(4, new Task("TaskNew1", "More information about task1", TaskStatus.DONE)));
+        Assertions.assertFalse(taskManager.update(4, new Task("TaskNew1", "More information about task1", TaskStatus.DONE, Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35))));
         Assertions.assertEquals("Epic1", taskManager.get(4).getTaskName());
     }
 
     @Test
     void TestErrorUpdateTaskChangesSubTask() { // Проверка апгрейда Task на SubTask
         Assertions.assertEquals("Subtask4", taskManager.get(10).getTaskName());
-        Assertions.assertFalse(taskManager.update(4, new Task("TaskNew1", "More information about task1", TaskStatus.DONE)));
+        Assertions.assertFalse(taskManager.update(4, new Task("TaskNew1", "More information about task1", TaskStatus.DONE, Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35))));
         Assertions.assertEquals("Subtask4", taskManager.get(10).getTaskName());
     }
 
@@ -200,7 +202,7 @@ public class InMemoryTaskManagerTest {
     @Test
     void TestUpdateSubTask() { // Проверка апгрейда SubTask
         Assertions.assertEquals(TaskStatus.NEW, taskManager.get(11).getTaskStatus());
-        Assertions.assertTrue(taskManager.update(11, new Subtask("SubSub", "More information about sub", TaskStatus.IN_PROGRESS, (Epic) taskManager.get(5))));
+        Assertions.assertTrue(taskManager.update(11, new Subtask("SubSub", "More information about sub", TaskStatus.IN_PROGRESS, (Epic) taskManager.get(5), Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35))));
         Assertions.assertEquals(TaskStatus.IN_PROGRESS, taskManager.get(11).getTaskStatus());
         Assertions.assertEquals("SubSub", taskManager.get(11).getTaskName());
     }
@@ -211,10 +213,10 @@ public class InMemoryTaskManagerTest {
         Assertions.assertEquals(TaskStatus.NEW, taskManager.get(7).getTaskStatus()); //Статус SubTask
         Assertions.assertEquals(TaskStatus.NEW, taskManager.get(8).getTaskStatus()); //Статус SubTask
         Assertions.assertEquals(TaskStatus.NEW, taskManager.get(9).getTaskStatus()); //Статус SubTask
-        Assertions.assertTrue(taskManager.update(8, new Subtask("SubSub", "More information about sub", TaskStatus.DONE, (Epic) taskManager.get(4))));
+        Assertions.assertTrue(taskManager.update(8, new Subtask("SubSub", "More information about sub", TaskStatus.DONE, (Epic) taskManager.get(4), Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35))));
         Assertions.assertEquals(TaskStatus.IN_PROGRESS, taskManager.get(4).getTaskStatus()); //Статус Epic стал IN_PROGRESS потому что изменился статус у подзадачи
-        Assertions.assertTrue(taskManager.update(7, new Subtask("SubSub", "More information about sub", TaskStatus.DONE, (Epic) taskManager.get(4))));
-        Assertions.assertTrue(taskManager.update(9, new Subtask("SubSub", "More information about sub", TaskStatus.DONE, (Epic) taskManager.get(4))));
+        Assertions.assertTrue(taskManager.update(7, new Subtask("SubSub", "More information about sub", TaskStatus.DONE, (Epic) taskManager.get(4), Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35))));
+        Assertions.assertTrue(taskManager.update(9, new Subtask("SubSub", "More information about sub", TaskStatus.DONE, (Epic) taskManager.get(4), Duration.ofMinutes(31), LocalDateTime.of(2025, 8, 4, 11, 35))));
         Assertions.assertEquals(TaskStatus.DONE, taskManager.get(4).getTaskStatus()); //Статус Epic стал DONE потому что все подзадачи выполнены
     }
 
