@@ -1,5 +1,6 @@
 package manager;
 
+import exceptions.TaskIntersectException;
 import task.Task;
 import task.Epic;
 import task.Subtask;
@@ -7,17 +8,17 @@ import task.TaskStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected int idForTasks;
+    protected final Set<Task> prioritizedTasks;
     protected final HistoryManager historyManager;
     protected final HashMap<Integer, Task> tasksList;
 
     public InMemoryTaskManager() {
         historyManager = Managers.getDefaultHistory();
+        this.prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getTaskStartTime));
         idForTasks = 1;
         tasksList = new HashMap<>();
     }
@@ -32,8 +33,11 @@ public class InMemoryTaskManager implements TaskManager {
         if (task == null) {
             return false;
         }
+
         task.setTaskID(id);
+        isNewTaskIntersects(task);
         tasksList.put(task.getTaskID(), task);
+        prioritizedTasks.add(task);
         if (task instanceof Subtask) {
             ((Subtask) task).getEpic().getSubtasks().add((Subtask) task);
         }
@@ -111,6 +115,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (tasksList.get(id) instanceof Epic) {
             return deleteEpic(id);
         } else {
+            prioritizedTasks.remove(tasksList.get(id));
             tasksList.remove(id);
             historyManager.remove(id);
             return true;
@@ -119,6 +124,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllTask() {
+        prioritizedTasks.clear();
         tasksList.clear();
 
         idForTasks = 1;
@@ -175,10 +181,12 @@ public class InMemoryTaskManager implements TaskManager {
             keysForDelete.add(subtask.getTaskID());
         }
         for (Integer key : keysForDelete) {
+            prioritizedTasks.remove(tasksList.get(key));
             historyManager.remove(key);
             tasksList.remove(key);
         }
 
+        prioritizedTasks.remove(oldEpic);
         tasksList.remove(id);
         historyManager.remove(id);
         return true;
@@ -186,6 +194,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     private boolean updateTask(int id, Task task) {
         task.setTaskID(id);
+        isNewTaskIntersects(task);
+        prioritizedTasks.add(task);
         tasksList.put(task.getTaskID(), task);
         return true;
     }
@@ -195,6 +205,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setSubtasks(oldEpic.getSubtasks());
         epic.setTaskID(id);
         tasksList.put(epic.getTaskID(), epic);
+        prioritizedTasks.add(oldEpic);
         return true;
     }
 
@@ -211,12 +222,19 @@ public class InMemoryTaskManager implements TaskManager {
 
         epic.setSubtasks(subtasksInEpic);
         subtask.setEpic(epic);
+        isNewTaskIntersects(subtask);
+        prioritizedTasks.add(subtask);
         tasksList.put(subtask.getTaskID(), subtask);
         return true;
     }
 
     public int getSize() {
         return tasksList.size();
+    }
+
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
     }
 
     private boolean convertTaskToEpic(int id, Epic newEpic) {
@@ -227,4 +245,24 @@ public class InMemoryTaskManager implements TaskManager {
         tasksList.put(convertedEpic.getTaskID(), convertedEpic);
         return true;
     }
+
+    private void isNewTaskIntersects(Task newTask) {
+        Optional<Task> intersectedTask = prioritizedTasks.stream()
+                .filter(task -> !(task instanceof Epic))
+                .filter(task -> isTwoTasksIntersect(newTask, task))
+                .findFirst();
+        if (intersectedTask.isPresent()) {
+            throw new TaskIntersectException("Задача %s не может быть добавлена, так как пересекается с %s"
+                    .formatted(newTask.getTaskName(), intersectedTask.get().getTaskName()));
+        }
+    }
+
+    private boolean isTwoTasksIntersect(Task task1, Task task2) {
+        if (task1.getTaskStartTime() == null || task2.getTaskStartTime() == null) {
+            return false;
+        }
+        return !(task1.getTaskEndTime().isBefore(task2.getTaskStartTime()) ||
+                task2.getTaskEndTime().isBefore(task1.getTaskStartTime()));
+    }
+
 }

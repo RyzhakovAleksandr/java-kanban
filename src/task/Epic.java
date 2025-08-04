@@ -9,12 +9,7 @@ public class Epic extends Task {
     private LocalDateTime taskEndTime;
 
     public Epic(String nameTask, String taskDescription) {
-        super(nameTask, taskDescription, TaskStatus.NEW,  Duration.ZERO, LocalDateTime.MAX);
-        this.subtasks = new ArrayList<>();
-    }
-
-    public Epic(Integer id, String nameTask, String taskDescription, TaskStatus taskStatus) {
-        super(id, nameTask, taskDescription, taskStatus,  Duration.ZERO, LocalDateTime.MAX);
+        super(nameTask, taskDescription, TaskStatus.NEW, Duration.ZERO, LocalDateTime.MAX);
         this.subtasks = new ArrayList<>();
     }
 

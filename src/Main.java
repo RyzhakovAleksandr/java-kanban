@@ -18,8 +18,8 @@ public class Main {
         Epic epic1 = new Epic("Epic1", "More information about epic1");
         Epic epic2 = new Epic("Epic2", "More information about epic2");
         Subtask subtask1 = new Subtask("Subtask1", "More information about subtask1", TaskStatus.NEW, epic1, Duration.ofMinutes(30), LocalDateTime.of(2025,8,4,10,0));
-        Subtask subtask2 = new Subtask("Subtask2", "More information about subtask2", TaskStatus.NEW, epic1, Duration.ofHours(2), LocalDateTime.of(2025,8,4,10,10));
-        Subtask subtask3 = new Subtask("Subtask3", "More information about subtask3", TaskStatus.NEW, epic1, Duration.ofHours(1), LocalDateTime.of(2025,8,4,10,30));
+        Subtask subtask2 = new Subtask("Subtask2", "More information about subtask2", TaskStatus.NEW, epic1, Duration.ofHours(2), LocalDateTime.of(2025,8,4,10,35));
+        Subtask subtask3 = new Subtask("Subtask3", "More information about subtask3", TaskStatus.NEW, epic1, Duration.ofHours(1), LocalDateTime.of(2025,8,4,12,45));
 
         taskManager.add(epic1);
         taskManager.add(epic2);
@@ -27,13 +27,17 @@ public class Main {
         taskManager.add(subtask2);
         taskManager.add(subtask3);
 
+        System.out.println("Вывод задач в порядке приоритета");
+        System.out.println(taskManager.getPrioritizedTasks());
+        System.out.println();
+
         System.out.println(taskManager.get(1));
         System.out.println(taskManager.get(2));
         System.out.println(taskManager.get(4));
         System.out.println(taskManager.get(1));
         System.out.println(taskManager.get(2));
 
-        System.out.println("Вывод истории 1-2-4-1-2 -> 4-1-2");
+       System.out.println("Вывод истории 1-2-4-1-2 -> 4-1-2");
         System.out.println(taskManager.getHistory());
 
         taskManager.get(5);

@@ -1,10 +1,13 @@
 package task;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.time.LocalDateTime;
 import java.time.Duration;
 
 public class Task {
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     private final String taskName;
     private final String taskDescription;
     private int taskID = -1;
@@ -12,7 +15,7 @@ public class Task {
     protected Duration taskDuration;
     protected LocalDateTime taskStartTime;
 
-    public Task(String nameTask, String taskDescription, TaskStatus taskStatus,  Duration taskDuration, LocalDateTime taskStartTime) {
+    public Task(String nameTask, String taskDescription, TaskStatus taskStatus, Duration taskDuration, LocalDateTime taskStartTime) {
         this.taskName = nameTask;
         this.taskDescription = taskDescription;
         this.taskStatus = taskStatus;
@@ -85,6 +88,6 @@ public class Task {
     @Override
     public String toString() {
         return String.format(getClass().getSimpleName() + "{taskID='%d', taskName='%s', taskDescription='%s', taskStatus='%s', duration='%s', startTime='%s', endTime='%s'}",
-                taskID, taskName, taskDescription, taskStatus,  taskDuration, taskStartTime, getTaskEndTime());
+                taskID, taskName, taskDescription, taskStatus, taskDuration.toMinutes(), taskStartTime.format(DATE_TIME_FORMATTER), getTaskEndTime().format(DATE_TIME_FORMATTER));
     }
 }

@@ -5,11 +5,13 @@ import task.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CSVFormatter {
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     public static String getHead() {
         return "id,type,name,status,description,epic";
     }
@@ -25,8 +27,8 @@ public class CSVFormatter {
                     subtask.getTaskStatus(),
                     subtask.getTaskDescription(),
                     subtask.getEpic().getTaskID(),
-                    subtask.getTaskDuration(),
-                    subtask.getTaskStartTime()
+                    subtask.getTaskDuration().toMinutes(),
+                    subtask.getTaskStartTime().format(DATE_TIME_FORMATTER)
             );
             case Epic epic -> format.formatted(
                     epic.getTaskID(),
@@ -35,8 +37,8 @@ public class CSVFormatter {
                     epic.getTaskStatus(),
                     epic.getTaskDescription(),
                     " ",
-                    epic.getTaskDuration(),
-                    epic.getTaskStartTime()
+                    epic.getTaskDuration().toMinutes(),
+                    epic.getTaskStartTime().format(DATE_TIME_FORMATTER)
             );
             case Task t -> format.formatted(
                     t.getTaskID(),
@@ -45,8 +47,8 @@ public class CSVFormatter {
                     t.getTaskStatus(),
                     t.getTaskDescription(),
                     " ",
-                    t.getTaskDuration(),
-                    t.getTaskStartTime()
+                    t.getTaskDuration().toMinutes(),
+                    t.getTaskStartTime().format(DATE_TIME_FORMATTER)
             );
         };
     }
@@ -74,12 +76,13 @@ public class CSVFormatter {
         String name = fields[2];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
-        Duration duration = Duration.parse(fields[6]);
-        LocalDateTime startTime = LocalDateTime.parse(fields[7]);
+        Duration duration = Duration.ofMinutes(Long.parseLong(fields[6]));
+        LocalDateTime startTime = LocalDateTime.parse(fields[7], DATE_TIME_FORMATTER);
         return switch (type) {
             case TASK -> new Task(id, name, description, status, duration, startTime);
             case EPIC -> new Epic(id, name, description, status, duration, startTime);
-            case SUBTASK -> new Subtask(id, name, description, status, (Epic) manager.get(Integer.parseInt(fields[5])), duration, startTime);
+            case SUBTASK ->
+                    new Subtask(id, name, description, status, (Epic) manager.get(Integer.parseInt(fields[5])), duration, startTime);
         };
     }
 
