@@ -82,7 +82,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public List<Task> getAll() {
         List<Task> tasks = super.getAll();
-        //save();
         return tasks;
     }
 
@@ -115,8 +114,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+
             writer.write(CSVFormatter.getHead());
             writer.newLine();
+            checkTypeEpic();
 
             for (Task task : tasksList.values()) {
                 writer.write(CSVFormatter.toCSVString(task));

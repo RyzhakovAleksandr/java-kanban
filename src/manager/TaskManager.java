@@ -25,4 +25,6 @@ public interface TaskManager {
     List<Task> getHistory();
 
     int getSize();
+
+    List<Task> getPrioritizedTasks();
 }
