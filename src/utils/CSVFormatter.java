@@ -16,10 +16,10 @@ public class CSVFormatter {
         return "id,type,name,status,description,epic";
     }
 
-    public static String toCSVString(Task task) {
+    public static String toCSVString(Task anyTask) {
         String format = "%s,%s,%s,%s,%s,%s,%s,%s";
 
-        return switch (task) {
+        return switch (anyTask) {
             case Subtask subtask -> format.formatted(
                     subtask.getTaskID(),
                     TaskType.SUBTASK,
@@ -40,15 +40,15 @@ public class CSVFormatter {
                     epic.getTaskDuration().toMinutes(),
                     epic.getTaskStartTime().format(DATE_TIME_FORMATTER)
             );
-            case Task t -> format.formatted(
-                    t.getTaskID(),
+            case Task task -> format.formatted(
+                    task.getTaskID(),
                     TaskType.TASK,
-                    t.getTaskName(),
-                    t.getTaskStatus(),
-                    t.getTaskDescription(),
+                    task.getTaskName(),
+                    task.getTaskStatus(),
+                    task.getTaskDescription(),
                     " ",
-                    t.getTaskDuration().toMinutes(),
-                    t.getTaskStartTime().format(DATE_TIME_FORMATTER)
+                    task.getTaskDuration().toMinutes(),
+                    task.getTaskStartTime().format(DATE_TIME_FORMATTER)
             );
         };
     }

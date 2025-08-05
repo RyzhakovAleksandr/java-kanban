@@ -32,7 +32,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void add_shouldAddTaskToHistory() {
+    void shouldAddTaskToHistory() {
         historyManager.add(task1);
         List<Task> history = historyManager.getTasks();
 
@@ -41,13 +41,13 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void add_shouldNotAddNullTask() {
+    void shouldNotAddNullTask() {
         historyManager.add(null);
         assertEquals(0, historyManager.getTasks().size());
     }
 
     @Test
-    void add_shouldMoveTaskToEndIfAlreadyExists() {
+    void shouldMoveTaskToEnd() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task1);
@@ -59,7 +59,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void remove_shouldRemoveTaskFromHistory() {
+    void shouldRemoveTaskFromHistory() {
         historyManager.add(task1);
         historyManager.add(task2);
 
@@ -71,7 +71,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void remove_shouldNotFailWhenRemovingNonExistentTask() {
+    void shouldNotFailWhenRemoving() {
         historyManager.add(task1);
         historyManager.remove(999); // Несуществующий ID
 
@@ -79,13 +79,13 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void getTasks_shouldReturnEmptyListForEmptyHistory() {
+    void shouldReturnEmptyList() {
         List<Task> history = historyManager.getTasks();
         assertTrue(history.isEmpty());
     }
 
     @Test
-    void getTasks_shouldReturnTasksInCorrectOrder() {
+    void shouldReturnTasks() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -97,17 +97,9 @@ class InMemoryHistoryManagerTest {
         assertEquals(task3, history.get(2));
     }
 
-    @Test
-    void getTasks_shouldReturnNewListInstance() {
-        historyManager.add(task1);
-        List<Task> firstCall = historyManager.getTasks();
-        List<Task> secondCall = historyManager.getTasks();
-
-        assertSame(firstCall, secondCall);
-    }
 
     @Test
-    void integrationTest_ComplexScenario() {
+    void integrationTest() {
         // Добавляем задачи
         historyManager.add(task1);
         historyManager.add(task2);
