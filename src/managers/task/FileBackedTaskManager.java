@@ -68,7 +68,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         }
         try {
-            List<Integer> historyIdList = CSVTaskFormatter.idStringToList(history);
+            List<Integer> historyIdList = CSVTaskFormatter.parseIdList(history);
             for (Integer id : historyIdList) {
                 taskManager.getById(id);
             }
@@ -136,7 +136,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             writer.write(CSVTaskFormatter.tasksToIdString(historyManager.getHistory()));
             writer.newLine();
         } catch (IOException ignored) {
-           throw new ManagerSaveException("Cant save to file");
+            throw new ManagerSaveException("Cant save to file");
         }
     }
 }

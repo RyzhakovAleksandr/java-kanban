@@ -89,7 +89,7 @@ class CSVTaskFormatterTest {
     void idStringToList() {
         String ids = "1,2,3,4";
         List<Integer> expectedIntegerList = List.of(1, 2, 3, 4);
-        List<Integer> actualIntegerList = CSVTaskFormatter.idStringToList(ids);
+        List<Integer> actualIntegerList = CSVTaskFormatter.parseIdList(ids);
         assertEquals(expectedIntegerList, actualIntegerList);
     }
 
@@ -116,7 +116,7 @@ class CSVTaskFormatterTest {
     void idStringToListWithEmptyString() {
         String ids = "";
         List<Integer> expectedIntegerList = List.of();
-        List<Integer> actualIntegerList = CSVTaskFormatter.idStringToList(ids);
+        List<Integer> actualIntegerList = CSVTaskFormatter.parseIdList(ids);
         assertEquals(expectedIntegerList, actualIntegerList);
     }
 
@@ -124,7 +124,7 @@ class CSVTaskFormatterTest {
     void tasksToIdStringWithEmptyList() {
         String ids = "";
         List<Integer> expectedIntegerList = List.of();
-        List<Integer> actualIntegerList = CSVTaskFormatter.idStringToList(ids);
+        List<Integer> actualIntegerList = CSVTaskFormatter.parseIdList(ids);
         assertEquals(expectedIntegerList, actualIntegerList);
     }
 }

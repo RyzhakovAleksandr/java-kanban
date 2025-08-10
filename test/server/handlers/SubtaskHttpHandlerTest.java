@@ -51,7 +51,7 @@ public class SubtaskHttpHandlerTest {
     }
 
     @Test
-    public void testPostSubTaskWithOverlap() throws IOException, InterruptedException {
+    public void PostSubTask_return406() throws IOException, InterruptedException {
         taskManager.addTask(subtask);
         SubTask newTask = (SubTask) subtask.clone();
         newTask.setId(null);
@@ -69,7 +69,7 @@ public class SubtaskHttpHandlerTest {
     }
 
     @Test
-    public void testUpdateSubTask() throws IOException, InterruptedException {
+    public void UpdateSubTask_return200() throws IOException, InterruptedException {
         taskManager.addTask(subtask);
         SubTask newTask = (SubTask) subtask.clone();
         newTask.setTitle("new title");
@@ -88,7 +88,7 @@ public class SubtaskHttpHandlerTest {
     }
 
     @Test
-    public void testPostSubTask() throws IOException, InterruptedException {
+    public void PostSubTask_return201() throws IOException, InterruptedException {
         String taskJson = httpTaskServer.getGson().toJson(subtask);
         URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
@@ -121,7 +121,7 @@ public class SubtaskHttpHandlerTest {
     }
 
     @Test
-    public void testGetSubTaskWithCorrectId() throws IOException, InterruptedException {
+    public void getSubTaskById() throws IOException, InterruptedException {
         taskManager.addTask(subtask);
         URI uri = URI.create(BASE_URI.concat("/1"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
@@ -136,7 +136,7 @@ public class SubtaskHttpHandlerTest {
     }
 
     @Test
-    public void testGetSubTaskWithInvalidId() throws IOException, InterruptedException {
+    public void getInvalidSubTask() throws IOException, InterruptedException {
         taskManager.addTask(subtask);
         URI uri = URI.create(BASE_URI.concat("/2"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
@@ -149,7 +149,7 @@ public class SubtaskHttpHandlerTest {
     }
 
     @Test
-    public void testDeleteSubTaskWithCorrectId() throws IOException, InterruptedException {
+    public void deleteSubTask() throws IOException, InterruptedException {
         taskManager.addTask(subtask);
         URI uri = URI.create(BASE_URI.concat("/1"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
@@ -163,7 +163,7 @@ public class SubtaskHttpHandlerTest {
     }
 
     @Test
-    public void testDeleteSubTaskWithInvalidId() throws IOException, InterruptedException {
+    public void deleteInvalidSubTask() throws IOException, InterruptedException {
         taskManager.addTask(subtask);
         URI uri = URI.create(BASE_URI.concat("/2"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {

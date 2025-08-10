@@ -51,8 +51,8 @@ public class CSVTaskFormatter {
         };
     }
 
-    public static BaseTask fromCSVString(String str) {
-        String[] taskFields = str.split(",");
+    public static BaseTask fromCSVString(String csvLine) {
+        String[] taskFields = csvLine.split(",");
         if (taskFields.length != 8) {
             throw new IllegalArgumentException("Incorrect csv pattern");
         }
@@ -90,11 +90,11 @@ public class CSVTaskFormatter {
         return taskIdStringBuilder.toString();
     }
 
-    public static List<Integer> idStringToList(String str) {
-        if (str.isEmpty()) {
+    public static List<Integer> parseIdList(String idString) {
+        if (idString.isEmpty()) {
             return List.of();
         }
-        String[] strings = str.split(",");
+        String[] strings = idString.split(",");
 
         List<Integer> ids = new ArrayList<>();
         for (String string : strings) {

@@ -37,7 +37,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
 
     @Test
-    public void testCantAddSubTaskWithEpicIdAsSubtaskId() {
+    public void subTaskWithEpicId() {
         SubTask subTask = new SubTask("Подзадача 1", "описание",
                 null, TaskStatus.NEW, 0, Duration.ofHours(1),
                 LocalDateTime.of(2020, 1, 1, 1, 1));
@@ -48,7 +48,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void testCantAddSubTaskWithEpicIdEqualsNull() {
+    public void subTaskWithNullEpicId() {
         SubTask subTask = new SubTask("Подзадача 1", "описание",
                 null, TaskStatus.NEW, null, Duration.ofHours(1),
                 LocalDateTime.of(2020, 1, 1, 1, 1));
@@ -58,7 +58,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void testTaskNotChangingWhenAdding() {
+    public void taskUnchangedAfterAdd() {
         taskManager.addTask(task1);
         Assertions.assertEquals(TaskStatus.NEW, task1.getStatus());
         Assertions.assertEquals("Задача 1", task1.getTitle());
@@ -69,7 +69,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void testTaskManagerAddingTasks() {
+    public void standardTaskAdded() {
         taskManager.addTask(task1);
 
         List<Task> standardTasks = taskManager.getAllStandardTasks();
@@ -77,7 +77,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void testTaskManagerAddingEpicTasks() {
+    public void epicTaskAdded() {
         EpicTask epic = new EpicTask("Задача 1", "описание", null);
         taskManager.addTask(epic);
 
@@ -87,7 +87,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void testAddingTaskWithId() {
+    public void taskWithCustomId() {
         Task task = new Task("Задача 1", "описание", 123, TaskStatus.NEW, Duration.ofHours(1),
                 LocalDateTime.of(2020, 1, 1, 1, 1));
         taskManager.addTask(task);
@@ -96,7 +96,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void testGetTaskWithId() {
+    public void getTaskById() {
         taskManager.addTask(task1);
         taskManager.addTask(task2);
 
@@ -104,7 +104,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void getThrowsWithIncorrectIdPassed() {
+    public void removeInvalidId() {
         taskManager.addTask(task1);
 
         Assertions.assertThrows(IllegalArgumentException.class, ()
@@ -113,7 +113,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void testShouldAddTasksToHistory() {
+    public void historyOnGetTask() {
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.getById(task1.getId());
@@ -124,7 +124,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void testShouldRemoveTasksFromHistory() {
+    public void historyOnRemoveTask() {
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.getById(task1.getId());
@@ -135,7 +135,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldNotAddTasksWithoutStartTimeToPrioritized() {
+    public void taskWithoutTime_notPrioritized() {
         Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
                 null);
         taskManager.addTask(task1);
@@ -145,7 +145,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldReturnPrioritizedTasksInNaturalOrder() {
+    public void tasksPrioritized() {
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         List<BaseTask> prioritizedTasks = taskManager.getPrioritizedTasks();
@@ -154,7 +154,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldNotAddIntersectingTasks() {
+    public void intersectingTasks() {
         Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(4),
                 LocalDateTime.of(2020, 1, 1, 1, 1));
         Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
@@ -164,7 +164,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldNotAddIntersectingSubTasks() {
+    public void intersectingSubTasks() {
         EpicTask epic = new EpicTask("Эпик", "описание", null);
         taskManager.addTask(epic);
         SubTask subTask1 = new SubTask("Задача 1", "описание", null, TaskStatus.NEW, 0,

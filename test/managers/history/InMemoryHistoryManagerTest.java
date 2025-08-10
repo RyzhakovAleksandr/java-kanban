@@ -24,7 +24,7 @@ class InMemoryHistoryManagerTest {
     void testHistoryManagerSavesTasks() {
         Task task1 = new Task("Задача 1", "описание", 12, TaskStatus.DONE, Duration.ofHours(1),
                 LocalDateTime.of(2020, 1, 1, 1, 1));
-        Task task2 = new Task("Задача 2", "описание", 14, TaskStatus.DONE,Duration.ofHours(1),
+        Task task2 = new Task("Задача 2", "описание", 14, TaskStatus.DONE, Duration.ofHours(1),
                 LocalDateTime.of(2020, 1, 1, 1, 1));
         historyManager.add(task1);
         historyManager.add(task2);

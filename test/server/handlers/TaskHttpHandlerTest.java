@@ -118,7 +118,7 @@ class TaskHttpHandlerTest {
     }
 
     @Test
-    public void testGetTaskWithCorrectId() throws IOException, InterruptedException {
+    public void GetCorrectTask() throws IOException, InterruptedException {
         taskManager.addTask(task);
         URI uri = URI.create(BASE_URI.concat("/0"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
@@ -133,7 +133,7 @@ class TaskHttpHandlerTest {
     }
 
     @Test
-    public void testGetTaskWithInvalidId() throws IOException, InterruptedException {
+    public void GetInvalidTask() throws IOException, InterruptedException {
         taskManager.addTask(task);
         URI uri = URI.create(BASE_URI.concat("/1"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
@@ -146,7 +146,7 @@ class TaskHttpHandlerTest {
     }
 
     @Test
-    public void testDeleteTaskWithCorrectId() throws IOException, InterruptedException {
+    public void DeleteCorrectTask() throws IOException, InterruptedException {
         taskManager.addTask(task);
         URI uri = URI.create(BASE_URI.concat("/0"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
@@ -160,7 +160,7 @@ class TaskHttpHandlerTest {
     }
 
     @Test
-    public void testDeleteTaskWithInvalidId() throws IOException, InterruptedException {
+    public void DeleteInvalidTask() throws IOException, InterruptedException {
         taskManager.addTask(task);
         URI uri = URI.create(BASE_URI.concat("/1"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {

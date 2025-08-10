@@ -13,7 +13,7 @@ public final class SubTask extends BaseTask {
                    Integer epicTaskId,
                    Duration duration,
                    LocalDateTime startTime) {
-        super(title, description, id, status,  duration, startTime);
+        super(title, description, id, status, duration, startTime);
         this.epicTaskId = epicTaskId;
     }
 
@@ -21,7 +21,4 @@ public final class SubTask extends BaseTask {
         return epicTaskId;
     }
 
-    public void setEpicTaskId(Integer epicTaskId) {
-        this.epicTaskId = epicTaskId;
-    }
 }

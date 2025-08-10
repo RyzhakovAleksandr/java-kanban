@@ -88,7 +88,7 @@ public class EpicHttpHandlerTest {
     }
 
     @Test
-    public void testGetAllSubtasksOfEpicWithInvalidId() throws IOException, InterruptedException {
+    public void getSubtasksByInvalidEpic() throws IOException, InterruptedException {
         taskManager.addTask(epic);
         URI uri = URI.create(BASE_URI.concat("/112"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {

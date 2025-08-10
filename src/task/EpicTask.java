@@ -16,9 +16,9 @@ public final class EpicTask extends BaseTask {
     }
 
     public void addSubTask(SubTask subTask) {
-        int i = subTasks.indexOf(subTask);
-        if (i != -1) {
-            subTasks.set(i, subTask);
+        int index = subTasks.indexOf(subTask);
+        if (index != -1) {
+            subTasks.set(index, subTask);
         } else {
             subTasks.add(subTask);
         }
@@ -68,8 +68,8 @@ public final class EpicTask extends BaseTask {
 
     private void calculateEpicDuration() {
         this.duration = subTasks.stream()
-               .map(SubTask::getDuration)
-               .reduce(Duration.ZERO, Duration::plus);
+                .map(SubTask::getDuration)
+                .reduce(Duration.ZERO, Duration::plus);
     }
 
     private void calculateEpicStartTime() {
