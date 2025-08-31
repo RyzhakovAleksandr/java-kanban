@@ -1,62 +1,81 @@
-import manager.FileBackedTaskManager;
-import manager.Managers;
-import manager.TaskManager;
-import task.Epic;
-import task.Subtask;
-import task.TaskStatus;
+import managers.Managers;
+import managers.task.TaskManager;
+import task.*;
 
-import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Main {
+
     public static void main(String[] args) {
-        //дополнительное задание
-        Managers managers = new Managers();
-        TaskManager taskManager = managers.getDefault();
+        TaskManager taskManager = Managers.getDefault();
 
-        Epic epic1 = new Epic("Epic1", "More information about epic1");
-        Epic epic2 = new Epic("Epic2", "More information about epic2");
-        Subtask subtask1 = new Subtask("Subtask1", "More information about subtask1", TaskStatus.NEW, epic1, Duration.ofMinutes(30), LocalDateTime.of(2025,8,4,10,0));
-        Subtask subtask2 = new Subtask("Subtask2", "More information about subtask2", TaskStatus.NEW, epic1, Duration.ofHours(2), LocalDateTime.of(2025,8,4,10,35));
-        Subtask subtask3 = new Subtask("Subtask3", "More information about subtask3", TaskStatus.NEW, epic1, Duration.ofHours(1), LocalDateTime.of(2025,8,4,12,45));
+        Task task1 = new Task("Задача 1", "описание ", null, TaskStatus.NEW,
+                Duration.ofHours(1), LocalDateTime.of(2020, 1, 1, 1, 1));
+        Task task2 = new Task("Задача 2", "описание ", null, TaskStatus.IN_PROGRESS,
+                Duration.ofHours(1), LocalDateTime.of(2020, 1, 1, 1, 1));
 
-        taskManager.add(epic1);
-        taskManager.add(epic2);
-        taskManager.add(subtask1);
-        taskManager.add(subtask2);
-        taskManager.add(subtask3);
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
 
-        System.out.println("Вывод задач в порядке приоритета");
-        System.out.println(taskManager.getPrioritizedTasks());
-        System.out.println();
+        printAllTasks(taskManager);
+        taskManager.getById(1);
+        taskManager.updateTask(new Task("Задача 1", "новое описание", 0, TaskStatus.DONE,
+                Duration.ofHours(1), LocalDateTime.of(2020, 1, 1, 1, 1)));
+        taskManager.removeById(1);
+        printAllTasks(taskManager);
 
-        System.out.println(taskManager.get(1));
-        System.out.println(taskManager.get(2));
-        System.out.println(taskManager.get(4));
-        System.out.println(taskManager.get(1));
-        System.out.println(taskManager.get(2));
+        EpicTask epic1 = new EpicTask("Эпик 1", "описание", null);
+        EpicTask epic2 = new EpicTask("Эпик 2", "описание", null);
+        taskManager.addTask(epic1);
+        taskManager.addTask(epic2);
+        printAllTasks(taskManager);
 
-       System.out.println("Вывод истории 1-2-4-1-2 -> 4-1-2");
-        System.out.println(taskManager.getHistory());
+        SubTask subTask1 = new SubTask("Подзадача 1", "описание", null, TaskStatus.NEW, 2,
+                Duration.ofHours(1), LocalDateTime.of(2020, 1, 1, 1, 1));
+        SubTask subTask2 = new SubTask("Подзадача 2", "описание", null, TaskStatus.NEW, 2,
+                Duration.ofHours(1), LocalDateTime.of(2020, 1, 1, 1, 1));
+        SubTask subTask3 = new SubTask("Подзадача 3", "описание", null, TaskStatus.NEW, 3,
+                Duration.ofHours(1), LocalDateTime.of(2020, 1, 1, 1, 1));
+        taskManager.getById(10);
+        taskManager.getById(2);
+        taskManager.addTask(subTask1);
+        taskManager.addTask(subTask2);
+        taskManager.addTask(subTask3);
+        printAllTasks(taskManager);
 
-        taskManager.get(5);
-        taskManager.get(5);
-        taskManager.get(5);
-        taskManager.get(1);
+        SubTask updatedSubTask3 = new SubTask("Подзадача 3", "описание", subTask3.getId(), TaskStatus.DONE, 3,
+                Duration.ofHours(1), LocalDateTime.of(2020, 1, 1, 1, 1));
+        taskManager.updateTask(updatedSubTask3);
+        printAllTasks(taskManager);
 
-        System.out.println("Вывод истории 1-2-4-1-2-5-5-5-1 -> 4-2-5-1");
-        System.out.println(taskManager.getHistory());
+        taskManager.removeById(2);
+        printAllTasks(taskManager);
+    }
 
-        System.out.println("Вывод истории после удаления эпик 1 содержащий подзадачи");
-        taskManager.remove(1);
-        System.out.println(taskManager.getHistory());
+    private static void printAllTasks(TaskManager manager) {
 
-        //Проверял загрузку из файла
-        taskManager = FileBackedTaskManager.loadFromFile(new File("resources%sdata.csv".formatted(File.separator)));
+        System.out.println("\nЗадачи:");
+        for (Task task : manager.getAllStandardTasks()) {
+            System.out.println(task);
+        }
 
-        System.out.println("Выгрузка из файла");
-        System.out.println(taskManager.getAll());
-        System.out.println(taskManager.getHistory());
+        System.out.println("Эпики:");
+        for (EpicTask epic : manager.getAllEpicsTasks()) {
+            System.out.println(epic);
+
+            for (SubTask task : manager.getAllSubtasksOfEpic(epic.getId())) {
+                System.out.println("--> " + task);
+            }
+        }
+        System.out.println("Подзадачи:");
+        for (SubTask subtask : manager.getAllSubTasks()) {
+            System.out.println(subtask);
+        }
+
+        System.out.println("История:");
+        for (BaseTask task : manager.getHistory()) {
+            System.out.println(task);
+        }
     }
 }
